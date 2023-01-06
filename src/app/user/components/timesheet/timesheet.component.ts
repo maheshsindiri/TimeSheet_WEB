@@ -32,16 +32,19 @@ export class TimesheetComponent implements OnInit {
     private profile:UserService
   ) {
     this.profile.getUserProfile().subscribe(res=>{
+      debugger;
       this.userProfile=res;
       console.log(this.userProfile);
       this.taskData = this.fb.group({
         //create a itemrows control in formgroup
         date: ['00-00-0000'],
-        empId: ['120941'],
+        //empId: ['120941'],
         empName: [this.userProfile?.givenName],
+        ObjectId: this.userProfile?.id,                                                                                       
   
-        itemRows: this.fb.array([this.initItemRow()]),
+        itemRows: this.fb.array([this.initItemRow()]),        
       });
+      this.getDate();
     })
     
     
@@ -63,7 +66,8 @@ export class TimesheetComponent implements OnInit {
     //   itemRows: this.fb.array([this.initItemRow()]),
     // });
     // this.getTasts();
-    this.getDate();
+    //debugger;
+    //this.getDate();
   }
   get itemRows() {
     return this.taskData.get('itemRows') as FormArray;
@@ -102,7 +106,7 @@ export class TimesheetComponent implements OnInit {
   
     this.taskView = false;
     this.service
-      .getTask(this.taskData.value['empId'], SelectedDate)
+      .getTask(this.taskData.value['ObjectId'], SelectedDate)
       .subscribe((data) => {
         this.project = data;
       });
@@ -113,12 +117,13 @@ export class TimesheetComponent implements OnInit {
   }
   submitAlert: boolean = false;
   saveTask() {
+    debugger;
     var Data: any = [];
     for (let i = 0; i <= this.Empid; i++) {
 
 
       var projectData: any = {
-        employeeID: this.taskData.value['empId'],
+        employeeID: this.taskData.value['ObjectId'],
         employeeName: this.taskData.value['empName'],
         date: this.taskData.value['date'],
         projectName: this.taskData.value['itemRows'][i].projectName,
@@ -141,8 +146,9 @@ export class TimesheetComponent implements OnInit {
       this.taskData = this.fb.group({
         //create a itemrows control in formgroup
         date: ['00-00-0000'],
-        empId: ['120941'],
+        //empId: ['120941'],
         empName: [this.userProfile?.givenName],
+        ObjectId: this.userProfile?.id,
   
         itemRows: this.fb.array([this.initItemRow()]),
       });
@@ -195,8 +201,10 @@ export class TimesheetComponent implements OnInit {
   // }
 
   getDate() {
-    //debugger;
-    this.service.getDate(this.taskData.value['empId']).subscribe((data) => {
+    debugger;
+    //this.userProfile?.id
+    //this.service.getDate(this.taskData.value['ObjectId']).subscribe((data) => {
+    this.service.getDate(this.userProfile?.id).subscribe((data) => {
       // console.log(data);
        this.date = data;
     }
